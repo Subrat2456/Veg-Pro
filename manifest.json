@@ -7,14 +7,14 @@
   "theme_color": "#f5f5f5",
   "icons": [
     {
-      "src": "logo.jfif",
+      "src": "logo.png",
       "sizes": "192x192",
-      "type": "image/jfif"
+      "type": "image/png"
     },
     {
-      "src": "logo.jfif",
+      "src": "logo.png",
       "sizes": "512x512",
-      "type": "image/jfif"
+      "type": "image/png"
     }
   ]
 }
