@@ -9,10 +9,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="icon" href="logo.png">
-  <link rel="apple-touch-icon" href="logo.png">
+  
+  <!-- Updated PWA Icons & Manifest Link -->
+  <link rel="icon" type="image/png" href="logo-192.png">
+  <link rel="apple-touch-icon" href="logo-192.png">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#059669">
+
   <style>
     :root {
       --primary: #059669;
@@ -643,7 +646,7 @@
     <div class="header-container">
       <div class="brand">
         <div class="brand-logo-wrapper">
-          <img src="logo.jfif" alt="Logo" class="brand-logo-img">
+          <img src="logo-192.png" alt="Logo" class="brand-logo-img">
         </div>
         <div class="brand-text">
           <h1>Vegetable Sales Manager</h1>
@@ -990,6 +993,15 @@
 
   <!-- APPLICATION JAVASCRIPT LOGIC -->
   <script>
+    // Register Service Worker for PWA / App Shortcuts
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker Registered:', reg.scope))
+          .catch(err => console.error('Service Worker Error:', err));
+      });
+    }
+
     const ENTRIES_KEY = 'veg_app_entries';
     const PAYMENTS_KEY = 'veg_app_payments';
 
