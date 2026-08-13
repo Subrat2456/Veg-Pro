@@ -1,0 +1,20 @@
+{
+  "name": "Notepad Editor",
+  "short_name": "Notepad",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f5f5f5",
+  "theme_color": "#f5f5f5",
+  "icons": [
+    {
+      "src": "logo.jfif",
+      "sizes": "192x192",
+      "type": "image/jfif"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/jfif"
+    }
+  ]
+}
