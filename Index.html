@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title> Vegetable Sales Manager</title>
+  <title>Vegetable Sales Manager</title>
   
   <!-- Modern Inter Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" href="logo.jfif">
-    <link rel="apple-touch-icon" href="logo.jfif">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#f5f5f5">
+  <link rel="apple-touch-icon" href="logo.jfif">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#059669">
   <style>
     :root {
       --primary: #059669;
@@ -109,13 +109,6 @@
       color: var(--text);
       line-height: 1.1;
       letter-spacing: -0.01em;
-    }
-
-    .brand-text p {
-      font-size: 0.73rem;
-      color: var(--text-muted);
-      font-weight: 500;
-      margin-top: 2px;
     }
 
     /* Main Container */
@@ -219,7 +212,6 @@
     }
 
     .stat-card.accent .stat-value { color: var(--accent); }
-    .stat-card.danger .stat-value { color: var(--danger); }
 
     /* Form Elements */
     .form-group {
@@ -230,6 +222,25 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .input-wrapper input {
+      padding-left: 38px;
     }
 
     label {
@@ -274,7 +285,7 @@
       color: var(--primary-dark);
     }
 
-    /* Buttons */
+    /* Buttons & Icons */
     .btn {
       width: 100%;
       padding: 13px 18px;
@@ -305,12 +316,12 @@
     }
     .btn-secondary:active { background: #e2e8f0; }
 
-    .btn-danger {
+    .btn-danger-light {
       background: var(--danger-light);
       color: var(--danger);
       box-shadow: none;
     }
-    .btn-danger:active { background: #fca5a5; }
+    .btn-danger-light:hover { background: #fca5a5; }
 
     .btn-accent {
       background: var(--accent);
@@ -318,11 +329,39 @@
       box-shadow: 0 2px 4px rgba(217, 119, 6, 0.25);
     }
 
+    /* Modern Icon Button Overhaul */
     .btn-icon-only {
       width: 36px;
       height: 36px;
       padding: 0;
       border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .btn-icon-only:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .btn-icon-only.danger:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: var(--danger-light);
+    }
+
+    .btn-icon-only svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
     }
 
     /* Mobile Entry Cards */
@@ -359,6 +398,7 @@
       font-size: 1rem;
       font-weight: 700;
       color: var(--primary-dark);
+      text-align: right;
     }
 
     .action-group {
@@ -372,9 +412,9 @@
     .badge {
       display: inline-flex;
       align-items: center;
-      padding: 4px 10px;
+      padding: 6px 12px;
       border-radius: 20px;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       font-weight: 600;
     }
 
@@ -382,7 +422,7 @@
     .badge-paid { background: var(--primary-light); color: var(--primary-dark); }
     .badge-overpaid { background: #dbeafe; color: #1d4ed8; }
 
-    /* Bottom Glass Navigation Bar */
+    /* Bottom Navigation Bar */
     nav {
       position: fixed;
       bottom: 12px;
@@ -514,7 +554,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Empty States */
     .empty-state {
       text-align: center;
       padding: 32px 16px;
@@ -529,11 +568,7 @@
       color: #cbd5e1;
     }
 
-    .empty-state p {
-      font-size: 0.88rem;
-    }
-
-    /* Print View Styles */
+    /* Print View */
     @media print {
       body {
         background: white;
@@ -619,7 +654,7 @@
           </svg>
         </div>
         <div class="brand-text">
-          <h2>Vegetable Sales Manager</h2>
+          <h1>Vegetable Sales Manager</h1>
         </div>
       </div>
     </div>
@@ -757,7 +792,10 @@
           </div>
         </div>
         <div class="form-group no-print">
-          <input type="text" id="search-previous" placeholder="🔍 Search customer or vegetable..." oninput="renderPreviousEntries()">
+          <div class="input-wrapper">
+            <svg class="input-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" id="search-previous" placeholder="Search customer or vegetable..." oninput="renderPreviousEntries()">
+          </div>
         </div>
         <div id="previous-entry-list" class="entry-list"></div>
       </div>
@@ -878,7 +916,9 @@
     <div class="modal-content">
       <div class="card-header">
         <div class="card-title">Edit Entry</div>
-        <button class="btn btn-secondary btn-icon-only" onclick="closeModal('edit-entry-modal')">✕</button>
+        <button class="btn-icon-only" onclick="closeModal('edit-entry-modal')" aria-label="Close">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
       </div>
       <form onsubmit="updateEntry(event)">
         <input type="hidden" id="edit-entry-id">
@@ -934,7 +974,9 @@
     <div class="modal-content">
       <div class="card-header">
         <div class="card-title">Edit Payment</div>
-        <button class="btn btn-secondary btn-icon-only" onclick="closeModal('edit-payment-modal')">✕</button>
+        <button class="btn-icon-only" onclick="closeModal('edit-payment-modal')" aria-label="Close">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
       </div>
       <form onsubmit="updatePayment(event)">
         <input type="hidden" id="edit-pay-id">
@@ -959,6 +1001,9 @@
     const ENTRIES_KEY = 'veg_app_entries';
     const PAYMENTS_KEY = 'veg_app_payments';
 
+    const EDIT_SVG = `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>`;
+    const DELETE_SVG = `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>`;
+
     function getTodayString() {
       return new Date().toISOString().split('T')[0];
     }
@@ -967,7 +1012,7 @@
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       toast.className = 'toast';
-      toast.innerHTML = `<span>✓</span> ${message}`;
+      toast.innerHTML = `<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> ${message}`;
       container.appendChild(toast);
       setTimeout(() => {
         toast.style.opacity = '0';
@@ -999,17 +1044,13 @@
       document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
 
       const target = document.getElementById(tabId);
-      target.classList.add('active');
+      if (target) target.classList.add('active');
 
-      const indexMap = {
-        'sec-dashboard': 0,
-        'sec-add': 1,
-        'sec-today': 2,
-        'sec-previous': 3,
-        'sec-payment': 4,
-        'sec-receipt': 5
-      };
-      document.querySelectorAll('.nav-btn')[indexMap[tabId]].classList.add('active');
+      const tabs = ['sec-dashboard', 'sec-add', 'sec-today', 'sec-previous', 'sec-payment', 'sec-receipt'];
+      const index = tabs.indexOf(tabId);
+      if (index !== -1) {
+        document.querySelectorAll('.nav-btn')[index].classList.add('active');
+      }
 
       if (tabId === 'sec-dashboard') renderDashboard();
       if (tabId === 'sec-today') renderTodayEntries();
@@ -1088,8 +1129,8 @@
           <div>
             <div class="entry-price">₹${item.total.toFixed(2)}</div>
             <div class="action-group">
-              <button class="btn btn-secondary btn-icon-only" onclick="openEditModal('${item.id}')">✏️</button>
-              <button class="btn btn-danger btn-icon-only" onclick="deleteEntry('${item.id}')">🗑️</button>
+              <button class="btn-icon-only" title="Edit" onclick="openEditModal('${item.id}')">${EDIT_SVG}</button>
+              <button class="btn-icon-only danger" title="Delete" onclick="deleteEntry('${item.id}')">${DELETE_SVG}</button>
             </div>
           </div>
         </div>
@@ -1144,8 +1185,8 @@
           <div>
             <div class="entry-price">₹${item.total.toFixed(2)}</div>
             <div class="action-group">
-              <button class="btn btn-secondary btn-icon-only" onclick="openEditModal('${item.id}')">✏️</button>
-              <button class="btn btn-danger btn-icon-only" onclick="deleteEntry('${item.id}')">🗑️</button>
+              <button class="btn-icon-only" title="Edit" onclick="openEditModal('${item.id}')">${EDIT_SVG}</button>
+              <button class="btn-icon-only danger" title="Delete" onclick="deleteEntry('${item.id}')">${DELETE_SVG}</button>
             </div>
           </div>
         </div>
@@ -1271,8 +1312,8 @@
               <p>Date: ${p.date}</p>
             </div>
             <div class="action-group">
-              <button class="btn btn-secondary btn-icon-only" onclick="openEditPaymentModal('${p.id}')">✏️</button>
-              <button class="btn btn-danger btn-icon-only" onclick="deletePayment('${p.id}')">🗑️</button>
+              <button class="btn-icon-only" title="Edit" onclick="openEditPaymentModal('${p.id}')">${EDIT_SVG}</button>
+              <button class="btn-icon-only danger" title="Delete" onclick="deletePayment('${p.id}')">${DELETE_SVG}</button>
             </div>
           </div>
         `).join('');
