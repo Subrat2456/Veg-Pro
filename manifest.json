@@ -1,7 +1,7 @@
 {
   "name": "Veg Pro",
   "short_name": "Veg Pro",
-  "start_url": "index.html",
+  "start_url": "Index.html",
   "display": "standalone",
   "background_color": "#f5f5f5",
   "theme_color": "#f5f5f5",
