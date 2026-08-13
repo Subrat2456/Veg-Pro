@@ -3,8 +3,8 @@ const ASSETS_TO_CACHE = [
   '/',
   '/Index.html',
   '/manifest.json',
-  '/logo-192.png',
-  '/logo-512.png'
+  '/logo.png',
+  '/logo.png'
 ];
 
 self.addEventListener('install', (event) => {
