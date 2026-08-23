@@ -12,9 +12,17 @@
   <link rel="apple-touch-icon" href="logo.png">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#059669">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Veg Pro">
   
-  <!-- html2pdf Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- html2pdf Library (Local offline bundle with CDN fallback) -->
+  <script src="html2pdf.bundle.min.js"></script>
+  <script>
+    if (typeof html2pdf === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>');
+    }
+  </script>
 
   <style>
     :root {
@@ -58,7 +66,7 @@
     }
 
     header {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       position: sticky;
@@ -74,6 +82,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
     }
 
     .brand {
@@ -108,6 +117,54 @@
       color: var(--text);
       line-height: 1.1;
       letter-spacing: -0.01em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+
+    .badge-status.online {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+
+    .badge-status.offline {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid rgba(220, 38, 38, 0.2);
+    }
+
+    .btn-install-header {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);
+    }
+
+    .btn-install-header:active {
+      transform: scale(0.96);
     }
 
     .container {
@@ -279,6 +336,16 @@
       color: var(--primary-dark);
     }
 
+    .select-with-btn {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .select-with-btn select {
+      flex: 1;
+    }
+
     .btn {
       width: 100%;
       padding: 13px 18px;
@@ -323,10 +390,10 @@
     .btn-whatsapp:active { background: #1ebe5d; }
 
     .btn-icon-only {
-      width: 36px;
-      height: 36px;
+      width: 42px;
+      height: 42px;
       padding: 0;
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -336,6 +403,7 @@
       box-shadow: var(--shadow-sm);
       transition: var(--transition);
       cursor: pointer;
+      flex-shrink: 0;
     }
 
     .btn-icon-only:hover {
@@ -419,7 +487,7 @@
       transform: translateX(-50%);
       width: calc(100% - 24px);
       max-width: 500px;
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(226, 232, 240, 0.8);
@@ -555,6 +623,40 @@
       color: #cbd5e1;
     }
 
+    /* Vegetable Manager UI */
+    .veg-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .veg-item-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .veg-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .veg-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
     @media print {
       body {
         background: white;
@@ -633,11 +735,18 @@
     <div class="header-container">
       <div class="brand">
         <div class="brand-logo-wrapper">
-          <img src="logo.png" alt="Logo" class="brand-logo-img" onerror="this.onerror=null; this.src='logo.jfif';">
+          <img src="logo.png" alt="Logo" class="brand-logo-img" onerror="this.onerror=null; this.src='logo.png';">
         </div>
         <div class="brand-text">
           <h1>Vegetable Sales Manager</h1>
         </div>
+      </div>
+      <div class="header-actions">
+        <span id="network-status-badge" class="badge-status online">🟢 Online</span>
+        <button id="btn-pwa-install" class="btn-install-header" style="display: none;" onclick="triggerPwaInstall()">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Install
+        </button>
       </div>
     </div>
   </header>
@@ -648,11 +757,11 @@
     <section id="sec-dashboard" class="section active">
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-label">ଆଜିର ମୋଟ ବିକ୍ରି</div>
+          <div class="stat-label">ଆଜିର ମୋଟ ବିକ୍ରି (Sales)</div>
           <div class="stat-value" id="dash-today-sales">₹0.00</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">ଆଜିର ଆଦାୟ</div>
+          <div class="stat-label">ଆଜିର ଆଦାୟ (Paid)</div>
           <div class="stat-value" id="dash-today-payments">₹0.00</div>
         </div>
         <div class="stat-card accent">
@@ -660,7 +769,7 @@
           <div class="stat-value" id="dash-total-pending">₹0.00</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">ମୋଟ ଗ୍ରାହକ</div>
+          <div class="stat-label">ମୋଟ ଗ୍ରାହକ (Customers)</div>
           <div class="stat-value" id="dash-total-customers">0</div>
         </div>
       </div>
@@ -672,7 +781,7 @@
             Quick Actions
           </div>
         </div>
-        <div class="form-row">
+        <div class="form-row" style="margin-bottom: 10px;">
           <button type="button" class="btn" onclick="switchTab('sec-add')">
             <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             New Sale
@@ -680,6 +789,16 @@
           <button type="button" class="btn btn-accent" onclick="switchTab('sec-payment')">
             <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a1 1 0 11-2 0 1 1 0 012 0z"/></svg>
             Payment
+          </button>
+        </div>
+        <div class="form-row">
+          <button type="button" class="btn btn-secondary" onclick="openManageVegModal()">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            Manage Vegetables
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="switchTab('sec-receipt')">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Receipt
           </button>
         </div>
       </div>
@@ -692,7 +811,7 @@
           </div>
         </div>
         <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
-          Export JSON backups to preserve years of store history or restore data across multiple devices.
+          Export JSON backups to preserve your sales, payments, and custom vegetable list across devices.
         </p>
         <div class="form-row" style="margin-bottom: 12px;">
           <button type="button" class="btn" onclick="exportDataJSON()">
@@ -705,9 +824,9 @@
           </button>
           <input type="file" id="import-json-input" accept=".json" style="display:none;" onchange="importDataJSON(event)">
         </div>
-        <div style="font-size:0.75rem; color:var(--text-muted); display:flex; justify-content:space-between;">
+        <div style="font-size:0.75rem; color:var(--text-muted); display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px;">
           <span>Database Size: <strong id="db-storage-size">0 KB</strong></span>
-          <span>Storage Mode: <strong>Persistent Local + JSON</strong></span>
+          <span>Offline Ready: <strong style="color:var(--primary-dark);">Enabled (PWA)</strong></span>
         </div>
       </div>
     </section>
@@ -736,21 +855,14 @@
 
           <div class="form-group">
             <label for="veg-select">ସବଜି ବାଛନ୍ତୁ (Vegetable Name)</label>
-            <select id="veg-select" required>
-              <option value="">-- ସବଜି ବାଛନ୍ତୁ --</option>
-              <option value="ଟମାଟୋ (Tomato)">ଟମାଟୋ (Tomato)</option>
-              <option value="କାଙ୍କଡ଼ (Kakondo)">କାଙ୍କଡ଼ (Kakondo)</option>
-              <option value="କଲରା (Karla)">କଲରା (Karla)</option>
-              <option value="ଭେଣ୍ଡି (Ladyfinger)">ଭେଣ୍ଡି (Ladyfinger)</option>
-              <option value="ଆଳୁ (Potato)">ଆଳୁ (Potato)</option>
-              <option value="ପିଆଜ (Onion)">ପିଆଜ (Onion)</option>
-              <option value="ବାଇଗଣ (Brinjal)">ବାଇଗଣ (Brinjal)</option>
-              <option value="ଫୁଲକୋବି (Cauliflower)">ଫୁଲକୋବି (Cauliflower)</option>
-              <option value="ବନ୍ଧାକୋବି (Cabbage)">ବନ୍ଧାକୋବି (Cabbage)</option>
-              <option value="ଜାନ୍ହି (Ridge Gourd)">ଜାନ୍ହି (Ridge Gourd)</option>
-              <option value="ଲାଉ (Bottle Gourd)">ଲାଉ (Bottle Gourd)</option>
-              <option value="ପୋଟଳ (Pointed Gourd)">ପୋଟଳ (Pointed Gourd)</option>
-            </select>
+            <div class="select-with-btn">
+              <select id="veg-select" required onchange="handleVegDropdownChange(this)">
+                <option value="">-- ସବଜି ବାଛନ୍ତୁ --</option>
+              </select>
+              <button type="button" class="btn-icon-only" title="Add / Manage Vegetables" onclick="openManageVegModal()">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              </button>
+            </div>
           </div>
 
           <div class="form-row">
@@ -802,7 +914,7 @@
         <div class="form-group no-print">
           <div class="input-wrapper">
             <svg class="input-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            <input type="text" id="search-previous" placeholder="Search customer or vegetable..." oninput="renderPreviousEntries()">
+            <input type="text" id="search-previous" placeholder="Search customer, vegetable, or date..." oninput="renderPreviousEntries()">
           </div>
         </div>
         <div id="previous-entry-list" class="entry-list"></div>
@@ -958,20 +1070,13 @@
         </div>
         <div class="form-group">
           <label for="edit-veg-select">Vegetable</label>
-          <select id="edit-veg-select" required>
-            <option value="ଟମାଟୋ (Tomato)">ଟମାଟୋ (Tomato)</option>
-            <option value="କାଙ୍କଡ଼ (Kakondo)">କାଙ୍କଡ଼ (Kakondo)</option>
-            <option value="କଲରା (Karla)">କଲରା (Karla)</option>
-            <option value="ଭେଣ୍ଡି (Ladyfinger)">ଭେଣ୍ଡି (Ladyfinger)</option>
-            <option value="ଆଳୁ (Potato)">ଆଳୁ (Potato)</option>
-            <option value="ପିଆଜ (Onion)">ପିଆଜ (Onion)</option>
-            <option value="ବାଇଗଣ (Brinjal)">ବାଇଗଣ (Brinjal)</option>
-            <option value="ଫୁଲକୋବି (Cauliflower)">ଫୁଲକୋବି (Cauliflower)</option>
-            <option value="ବନ୍ଧାକୋବି (Cabbage)">ବନ୍ଧାକୋବି (Cabbage)</option>
-            <option value="ଜାନ୍ହି (Ridge Gourd)">ଜାନ୍ହି (Ridge Gourd)</option>
-            <option value="ଲାଉ (Bottle Gourd)">ଲାଉ (Bottle Gourd)</option>
-            <option value="ପୋଟଳ (Pointed Gourd)">ପୋଟଳ (Pointed Gourd)</option>
-          </select>
+          <div class="select-with-btn">
+            <select id="edit-veg-select" required onchange="handleVegDropdownChange(this)">
+            </select>
+            <button type="button" class="btn-icon-only" title="Add / Manage Vegetables" onclick="openManageVegModal()">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            </button>
+          </div>
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -1022,16 +1127,146 @@
     </div>
   </div>
 
+  <!-- MANAGE VEGETABLES MODAL -->
+  <div id="manage-veg-modal" class="modal">
+    <div class="modal-content">
+      <div class="card-header">
+        <div class="card-title">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          Manage Vegetables / ସବଜି ତାଲିକା
+        </div>
+        <button class="btn-icon-only" onclick="closeModal('manage-veg-modal')" aria-label="Close">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Add New Vegetable Form -->
+      <form onsubmit="handleAddNewVegetableForm(event)" style="margin-bottom: 16px;">
+        <label for="new-veg-name-input">ନୂଆ ସବଜି ଯୋଡନ୍ତୁ (Add Vegetable)</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="new-veg-name-input" placeholder="e.g., ଗାଜର (Carrot) or Beans" required autocomplete="off">
+          <button type="submit" class="btn" style="width: auto; padding: 0 16px; white-space: nowrap;">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Add
+          </button>
+        </div>
+      </form>
+
+      <!-- Search / Filter Vegetables -->
+      <div class="form-group" style="margin-bottom: 12px;">
+        <div class="input-wrapper">
+          <svg class="input-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="filter-veg-input" placeholder="Search vegetables..." oninput="renderVegetablesList()">
+        </div>
+      </div>
+
+      <!-- Vegetable List Container -->
+      <div style="max-height: 280px; overflow-y: auto; margin-bottom: 16px; padding-right: 2px;" id="veg-list-container">
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 12px;">
+        <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; width: auto; padding: 8px 12px;" onclick="resetVegetablesToDefault()">
+          🔄 Reset Default List
+        </button>
+        <button type="button" class="btn" style="width: auto; padding: 8px 20px;" onclick="closeModal('manage-veg-modal')">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const ENTRIES_KEY = 'veg_app_entries';
     const PAYMENTS_KEY = 'veg_app_payments';
+    const VEGETABLES_KEY = 'veg_app_vegetables';
+
+    const DEFAULT_VEGETABLES = [
+      "ଟମାଟୋ (Tomato)",
+      "କାଙ୍କଡ଼ (Kakondo)",
+      "କଲରା (Karla)",
+      "ଭେଣ୍ଡି (Ladyfinger)",
+      "ଆଳୁ (Potato)",
+      "ପିଆଜ (Onion)",
+      "ବାଇଗଣ (Brinjal)",
+      "ଫୁଲକୋବି (Cauliflower)",
+      "ବନ୍ଧାକୋବି (Cabbage)",
+      "ଜାନ୍ହି (Ridge Gourd)",
+      "ଲାଉ (Bottle Gourd)",
+      "ପୋଟଳ (Pointed Gourd)",
+      "ଗାଜର (Carrot)",
+      "ବିନ୍ସ (Beans)",
+      "ମୂଳା (Radish)",
+      "କଖାରୁ (Pumpkin)",
+      "ଶିମ୍ବ (Flat Beans)",
+      "କୁନ୍ଦୁରି (Ivy Gourd)",
+      "ସଜନା ଛୁଇଁ (Drumstick)",
+      "କଞ୍ଚା ଲଙ୍କା (Green Chilli)",
+      "ଅଦା (Ginger)",
+      "ରସୁଣ (Garlic)",
+      "ଧନିଆ ପତ୍ର (Coriander)"
+    ];
 
     const EDIT_SVG = `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>`;
     const DELETE_SVG = `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>`;
 
+    // --- PWA SERVICE WORKER & OFFLINE ENGINE ---
+    let deferredPrompt = null;
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => {
+            console.log('[SW] ServiceWorker registered with scope:', reg.scope);
+            // Check for updates
+            reg.update().catch(() => {});
+          })
+          .catch((err) => {
+            console.warn('[SW] Registration failed:', err);
+          });
+      });
+    }
+
+    // Network status listener
+    function updateNetworkStatus() {
+      const badge = document.getElementById('network-status-badge');
+      if (!badge) return;
+      if (navigator.onLine) {
+        badge.className = 'badge-status online';
+        badge.innerHTML = '🟢 Online';
+      } else {
+        badge.className = 'badge-status offline';
+        badge.innerHTML = '🟡 Offline Mode';
+      }
+    }
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+
+    // PWA Install prompt listener
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installBtn = document.getElementById('btn-pwa-install');
+      if (installBtn) installBtn.style.display = 'inline-flex';
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredPrompt = null;
+      const installBtn = document.getElementById('btn-pwa-install');
+      if (installBtn) installBtn.style.display = 'none';
+      showToast('App installed successfully! Works offline.');
+    });
+
+    function triggerPwaInstall() {
+      if (!deferredPrompt) {
+        showToast('App is ready to install or already installed.');
+        return;
+      }
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+        }
+        deferredPrompt = null;
       });
     }
 
@@ -1053,6 +1288,7 @@
       }, 2500);
     }
 
+    // --- DATA PERSISTENCE LAYER ---
     function getEntries() {
       try {
         return JSON.parse(localStorage.getItem(ENTRIES_KEY)) || [];
@@ -1079,10 +1315,190 @@
       updateStorageUsageIndicator();
     }
 
+    // --- VEGETABLE MANAGEMENT LAYER ---
+    function getVegetables() {
+      try {
+        const stored = JSON.parse(localStorage.getItem(VEGETABLES_KEY));
+        if (Array.isArray(stored) && stored.length > 0) {
+          return stored;
+        }
+      } catch(e) {}
+      // Initialize with default list if empty
+      localStorage.setItem(VEGETABLES_KEY, JSON.stringify(DEFAULT_VEGETABLES));
+      return [...DEFAULT_VEGETABLES];
+    }
+
+    function saveVegetablesData(vegs) {
+      localStorage.setItem(VEGETABLES_KEY, JSON.stringify(vegs));
+      populateVegetableDropdowns();
+      renderVegetablesList();
+      updateStorageUsageIndicator();
+    }
+
+    function populateVegetableDropdowns(selectedVal = null) {
+      const vegs = getVegetables();
+      const addSelect = document.getElementById('veg-select');
+      const editSelect = document.getElementById('edit-veg-select');
+
+      const currentAddVal = selectedVal || (addSelect ? addSelect.value : '');
+      const currentEditVal = editSelect ? editSelect.value : '';
+
+      const optionsHtml = [
+        '<option value="">-- ସବଜି ବାଛନ୍ତୁ --</option>',
+        ...vegs.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`),
+        '<option value="__add_new__">➕ + Add New Vegetable / ନୂଆ ସବଜି ଯୋଡନ୍ତୁ...</option>'
+      ].join('');
+
+      if (addSelect) {
+        addSelect.innerHTML = optionsHtml;
+        if (currentAddVal && vegs.includes(currentAddVal)) {
+          addSelect.value = currentAddVal;
+        }
+      }
+
+      if (editSelect) {
+        editSelect.innerHTML = optionsHtml;
+        if (currentEditVal && vegs.includes(currentEditVal)) {
+          editSelect.value = currentEditVal;
+        }
+      }
+    }
+
+    function handleVegDropdownChange(selectElement) {
+      if (selectElement.value === '__add_new__') {
+        selectElement.value = '';
+        openManageVegModal();
+      }
+    }
+
+    function openManageVegModal() {
+      renderVegetablesList();
+      document.getElementById('manage-veg-modal').classList.add('active');
+      setTimeout(() => {
+        const input = document.getElementById('new-veg-name-input');
+        if (input) input.focus();
+      }, 150);
+    }
+
+    function handleAddNewVegetableForm(e) {
+      e.preventDefault();
+      const input = document.getElementById('new-veg-name-input');
+      const vegName = input.value.trim();
+      if (!vegName) return;
+
+      const vegs = getVegetables();
+      const exists = vegs.some(v => v.toLowerCase() === vegName.toLowerCase());
+      if (exists) {
+        alert('This vegetable already exists in your list!');
+        return;
+      }
+
+      vegs.push(vegName);
+      saveVegetablesData(vegs);
+      input.value = '';
+
+      // Auto select the new vegetable in the sale form
+      populateVegetableDropdowns(vegName);
+      const addSelect = document.getElementById('veg-select');
+      if (addSelect) addSelect.value = vegName;
+
+      showToast(`Added vegetable: ${vegName}`);
+    }
+
+    function renderVegetablesList() {
+      const vegs = getVegetables();
+      const query = (document.getElementById('filter-veg-input')?.value || '').toLowerCase();
+      const container = document.getElementById('veg-list-container');
+      if (!container) return;
+
+      const filtered = vegs.filter(v => v.toLowerCase().includes(query));
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.85rem; padding:16px;">No vegetables found matching "${escapeHtml(query)}".</p>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(v => `
+        <div class="veg-item">
+          <div class="veg-item-title">
+            ${escapeHtml(v)}
+          </div>
+          <div class="veg-actions">
+            <button type="button" class="btn-icon-only" style="width:32px; height:32px;" title="Rename" onclick="promptEditVegetable('${escapeJsString(v)}')">
+              ${EDIT_SVG}
+            </button>
+            <button type="button" class="btn-icon-only danger" style="width:32px; height:32px;" title="Delete" onclick="deleteVegetable('${escapeJsString(v)}')">
+              ${DELETE_SVG}
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function promptEditVegetable(oldName) {
+      const newName = prompt('Enter new name for vegetable:', oldName);
+      if (!newName || newName.trim() === '' || newName.trim() === oldName) return;
+
+      const trimmed = newName.trim();
+      let vegs = getVegetables();
+
+      if (vegs.some(v => v.toLowerCase() === trimmed.toLowerCase() && v !== oldName)) {
+        alert('Another vegetable with this name already exists.');
+        return;
+      }
+
+      vegs = vegs.map(v => v === oldName ? trimmed : v);
+      saveVegetablesData(vegs);
+
+      // Also update history records if user wants consistency
+      let entries = getEntries();
+      let updatedCount = 0;
+      entries = entries.map(e => {
+        if (e.vegetable === oldName) {
+          updatedCount++;
+          return { ...e, vegetable: trimmed };
+        }
+        return e;
+      });
+      if (updatedCount > 0) {
+        saveEntriesData(entries);
+        renderTodayEntries();
+        renderPreviousEntries();
+        renderReceipt();
+      }
+
+      showToast(`Updated to: ${trimmed}`);
+    }
+
+    function deleteVegetable(vegName) {
+      if (!confirm(`Are you sure you want to remove "${vegName}" from the vegetable list?`)) return;
+
+      let vegs = getVegetables();
+      vegs = vegs.filter(v => v !== vegName);
+      if (vegs.length === 0) {
+        alert('You must have at least one vegetable in the list.');
+        return;
+      }
+
+      saveVegetablesData(vegs);
+      showToast(`Removed: ${vegName}`);
+    }
+
+    function resetVegetablesToDefault() {
+      if (!confirm('Reset vegetable list back to default 23 vegetables? Custom added vegetables will be merged or replaced.')) return;
+      saveVegetablesData([...DEFAULT_VEGETABLES]);
+      showToast('Vegetable list reset to default.');
+    }
+
+    function escapeJsString(str) {
+      return (str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+    }
+
     function updateStorageUsageIndicator() {
       const eLen = localStorage.getItem(ENTRIES_KEY) || '';
       const pLen = localStorage.getItem(PAYMENTS_KEY) || '';
-      const totalBytes = (eLen.length + pLen.length) * 2;
+      const vLen = localStorage.getItem(VEGETABLES_KEY) || '';
+      const totalBytes = (eLen.length + pLen.length + vLen.length) * 2;
       const kb = (totalBytes / 1024).toFixed(2);
       const el = document.getElementById('db-storage-size');
       if (el) el.innerText = `${kb} KB`;
@@ -1092,6 +1508,8 @@
       document.getElementById('entry-date').value = getTodayString();
       document.getElementById('pay-date').value = getTodayString();
       
+      updateNetworkStatus();
+      populateVegetableDropdowns();
       updateCustomerDatalist();
       renderDashboard();
       renderTodayEntries();
@@ -1104,8 +1522,9 @@
     function exportDataJSON() {
       const backupData = {
         app: "Vegetable Sales Manager",
-        version: "2.0",
+        version: "2.1",
         exportDate: new Date().toISOString(),
+        vegetables: getVegetables(),
         entries: getEntries(),
         payments: getPayments()
       };
@@ -1135,17 +1554,25 @@
             throw new Error('Invalid JSON structure');
           }
 
-          if (confirm(`Restore ${imported.entries.length} sales and ${imported.payments.length} payments? Existing records will be safely merged.`)) {
+          if (confirm(`Restore ${imported.entries.length} sales, ${imported.payments.length} payments, and vegetable catalogue? Existing records will be safely merged.`)) {
+            // Merge entries
             const currentEntries = getEntries();
-            const currentPayments = getPayments();
-
             const entryMap = new Map();
             currentEntries.forEach(item => entryMap.set(item.id, item));
             imported.entries.forEach(item => entryMap.set(item.id, item));
 
+            // Merge payments
+            const currentPayments = getPayments();
             const paymentMap = new Map();
             currentPayments.forEach(item => paymentMap.set(item.id, item));
             imported.payments.forEach(item => paymentMap.set(item.id, item));
+
+            // Merge vegetables
+            if (Array.isArray(imported.vegetables) && imported.vegetables.length > 0) {
+              const currentVegs = getVegetables();
+              const mergedVegs = [...new Set([...currentVegs, ...imported.vegetables])];
+              saveVegetablesData(mergedVegs);
+            }
 
             saveEntriesData(Array.from(entryMap.values()));
             savePaymentsData(Array.from(paymentMap.values()));
@@ -1188,8 +1615,16 @@
       }
 
       showToast('Generating PDF statement...');
+      if (typeof html2pdf !== 'function') {
+        alert('PDF generator is initializing. Please try again in a moment or use Print.');
+        return;
+      }
+
       html2pdf().set(getPDFOptions(customer)).from(element).save().then(() => {
         showToast('PDF downloaded successfully');
+      }).catch((err) => {
+        console.error('PDF error:', err);
+        window.print();
       });
     }
 
@@ -1294,6 +1729,7 @@
       }
 
       if (tabId === 'sec-dashboard') renderDashboard();
+      if (tabId === 'sec-add') populateVegetableDropdowns();
       if (tabId === 'sec-today') renderTodayEntries();
       if (tabId === 'sec-previous') renderPreviousEntries();
       if (tabId === 'sec-payment') populateCustomerDropdowns();
@@ -1323,7 +1759,10 @@
         ...payments.map(p => (p.customer || '').trim())
       ])].filter(Boolean);
 
-      document.getElementById('customer-list').innerHTML = customers.map(c => `<option value="${escapeHtml(c)}">`).join('');
+      const datalist = document.getElementById('customer-list');
+      if (datalist) {
+        datalist.innerHTML = customers.map(c => `<option value="${escapeHtml(c)}">`).join('');
+      }
     }
 
     function saveEntry(e) {
@@ -1335,7 +1774,10 @@
       const rate = parseFloat(document.getElementById('veg-rate').value);
       const total = parseFloat(document.getElementById('veg-total').value);
 
-      if (!customer || !vegetable || isNaN(quantity) || isNaN(rate)) return;
+      if (!customer || !vegetable || vegetable === '__add_new__' || isNaN(quantity) || isNaN(rate)) {
+        alert('Please fill all required fields properly.');
+        return;
+      }
 
       const newEntry = { id: Date.now().toString(), date, customer, vegetable, quantity, rate, total };
       const entries = getEntries();
@@ -1344,6 +1786,7 @@
 
       document.getElementById('add-entry-form').reset();
       document.getElementById('entry-date').value = getTodayString();
+      populateVegetableDropdowns();
       updateCustomerDatalist();
 
       showToast('Sale entry saved successfully');
@@ -1446,10 +1889,15 @@
       const entry = getEntries().find(e => e.id === id);
       if (!entry) return;
 
+      populateVegetableDropdowns();
+
       document.getElementById('edit-entry-id').value = entry.id;
       document.getElementById('edit-entry-date').value = entry.date;
       document.getElementById('edit-customer-name').value = entry.customer;
-      document.getElementById('edit-veg-select').value = entry.vegetable;
+      
+      const editVegSelect = document.getElementById('edit-veg-select');
+      if (editVegSelect) editVegSelect.value = entry.vegetable;
+
       document.getElementById('edit-veg-qty').value = entry.quantity;
       document.getElementById('edit-veg-rate').value = entry.rate;
       document.getElementById('edit-veg-total').value = entry.total;
@@ -1460,13 +1908,19 @@
     function updateEntry(e) {
       e.preventDefault();
       const id = document.getElementById('edit-entry-id').value;
+      const vegVal = document.getElementById('edit-veg-select').value;
+      if (vegVal === '__add_new__') {
+        alert('Please choose a valid vegetable.');
+        return;
+      }
+
       let entries = getEntries();
 
       entries = entries.map(item => item.id === id ? {
         id,
         date: document.getElementById('edit-entry-date').value,
         customer: document.getElementById('edit-customer-name').value.trim(),
-        vegetable: document.getElementById('edit-veg-select').value,
+        vegetable: vegVal,
         quantity: parseFloat(document.getElementById('edit-veg-qty').value),
         rate: parseFloat(document.getElementById('edit-veg-rate').value),
         total: parseFloat(document.getElementById('edit-veg-total').value)
@@ -1496,7 +1950,8 @@
     }
 
     function closeModal(modalId) {
-      document.getElementById(modalId).classList.remove('active');
+      const modal = document.getElementById(modalId);
+      if (modal) modal.classList.remove('active');
     }
 
     function populateCustomerDropdowns() {
@@ -1509,6 +1964,8 @@
 
       const paySelect = document.getElementById('pay-customer-select');
       const recSelect = document.getElementById('receipt-customer-select');
+
+      if (!paySelect || !recSelect) return;
 
       const payVal = paySelect.value;
       const recVal = recSelect.value;
@@ -1670,7 +2127,7 @@
             <h2>ବିକ୍ରି ରସିଦ</h2>
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; font-weight:600;">Vegetable Sales Statement</p>
           </div>
-          <div style="display:flex; justify-content:space-between; font-size:0.9rem; margin-bottom: 12px;">
+          <div style="display:flex; justify-content:space-between; font-size:0.9rem; margin-bottom: 12px; flex-wrap:wrap; gap:6px;">
             <span>Customer: <strong>${escapeHtml(customer)}</strong></span>
             <span>Date: <strong>${getTodayString()}</strong></span>
           </div>
